@@ -99,7 +99,6 @@ public class Editorial {
                 System.out.print("Introduce el nuevo nombre de la editorial: ");
                 String nombre2 = scanner.nextLine();
 
-                if()
                     break;
 
         }
