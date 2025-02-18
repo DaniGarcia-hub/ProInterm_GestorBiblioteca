@@ -1,6 +1,6 @@
 package GestarBiblioteca.src;
 
-// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW.
+// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW. | TABLA USUARIO.
 
 public class Usuario {
     private long idUsuario;
@@ -65,8 +65,7 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario | " +
-                "ID Usuario: " + idUsuario +
+        return "ID Usuario: " + idUsuario +
                 " | Nombre: " + nombre +
                 " | Direccion: " + direccion +
                 " | Telefono: " + telefono +

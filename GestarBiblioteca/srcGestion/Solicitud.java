@@ -1,9 +1,11 @@
 package GestarBiblioteca.srcGestion;
+import GestarBiblioteca.Colores;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import static GestarBiblioteca.srcGestion.Validacion.*;
 
-// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW.
+// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW. | TABLA USUARIO.
 
 public class Solicitud {
     static Scanner sc = new Scanner(System.in);
@@ -14,7 +16,7 @@ public class Solicitud {
                 System.out.println("Introduce el ID de usuario:\nCondiciones:\n- No puede ser negativo.\n- No debe contener 0 el inicio.");
                 idusuario = Math.abs(sc.nextLong());
             } catch (InputMismatchException e){
-                System.err.println("Formato incorrecto. (Necesita números).");
+                System.out.println(Colores.COLOR_ROJO + "Formato incorrecto. (Necesita números)." + Colores.COLOR_RESET);
                 sc.nextLine();
                 solicitarIDUsuario();
             }

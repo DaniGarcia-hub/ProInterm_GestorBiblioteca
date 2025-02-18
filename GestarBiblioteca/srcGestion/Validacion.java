@@ -1,11 +1,13 @@
 package GestarBiblioteca.srcGestion;
 
+import GestarBiblioteca.Colores;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW.
+// DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW. | TABLA USUARIO.
 
 public class Validacion {
 
@@ -16,10 +18,12 @@ public class Validacion {
     protected static boolean comprobarStrigSoloLetras(String palabraComprobar){
         boolean correcto = true;
         for (int i = 0; i < palabraComprobar.length(); i++){
-            if (!Character.isAlphabetic(palabraComprobar.charAt(i))){
-                System.err.println("Solo se permiten carácteres alfabéticos.");
+            if (!Character.isLetter(palabraComprobar.charAt(i))){
+                if(Character.isSpaceChar(palabraComprobar.charAt(i))) {continue;}
+                System.out.println(Colores.COLOR_ROJO + "Solo se permiten carácteres alfabéticos." + Colores.COLOR_RESET);
                 correcto = false;
                 break;
+
             }
         }
         return correcto;
@@ -29,7 +33,7 @@ public class Validacion {
         boolean correcto = true;
         for (int i = 0; i < palabraComprobar.length(); i++){
             if (!Character.isDigit(palabraComprobar.charAt(i))){
-                System.err.println("Solo se permiten números.");
+                System.out.println(Colores.COLOR_ROJO + "Solo se permiten números." + Colores.COLOR_RESET);
                 correcto = false;
                 break;
             }
@@ -40,7 +44,10 @@ public class Validacion {
     protected static boolean validarIDUsuario(long idUsuario){
         String conversionIDUsuario = String.valueOf(idUsuario);
         if (conversionIDUsuario.length() > MAX_11CARACTER){
-            System.err.println("No se permite un código de libro con una longitud mayor a 11 dígitos.");
+            System.out.println(Colores.COLOR_ROJO + "No se permite un código de libro con una longitud mayor a 11 dígitos." + Colores.COLOR_RESET);
+            return false;
+        } else if (conversionIDUsuario.length() == 1 && conversionIDUsuario.charAt(0) == '0'){
+            System.out.println(Colores.COLOR_ROJO + "No se permite registrar el ID 0." + Colores.COLOR_RESET);
             return false;
         }
         return true;
@@ -49,10 +56,10 @@ public class Validacion {
     protected static boolean validarNombre(String nombreUsuario){
         boolean devolver = true;
         if (nombreUsuario.isEmpty()){
-            System.err.println("No se puede dejar el nombre vacío.");
+            System.out.println(Colores.COLOR_ROJO + "No se puede dejar el nombre vacío." + Colores.COLOR_RESET);
             devolver = false;
         } else if (nombreUsuario.length() > MAX_35CARACTER) {
-            System.err.println("No se permite una cantidad mayor a 35 carácteres.");
+            System.out.println(Colores.COLOR_ROJO + "No se permite una cantidad mayor a 35 carácteres." + Colores.COLOR_RESET);
             devolver = false;
         } else if (!comprobarStrigSoloLetras(nombreUsuario)) {
             devolver = false;
@@ -63,7 +70,7 @@ public class Validacion {
     protected static boolean validarDireccion(String direccionUsuario){
         boolean devolver = true;
         if (direccionUsuario.length() > MAX_35CARACTER){
-            System.err.println("No se permite una cantidad mayor a 35 carácteres.");
+            System.out.println(Colores.COLOR_ROJO + "No se permite una cantidad mayor a 35 carácteres." + Colores.COLOR_RESET);
             devolver = false;
         }
         return devolver;
@@ -76,7 +83,7 @@ public class Validacion {
         if (!comprobarSoloNumeros(telefonoUsuario)) {
             devolver = false;
         } else if (telefonoUsuario.length() != 9){
-            System.err.println("La longitud del telefono debe ser de 9 dígitos.");
+            System.out.println(Colores.COLOR_ROJO + "La longitud del telefono debe ser de 9 dígitos." + Colores.COLOR_RESET);
             devolver = false;
         }
         return devolver;
@@ -94,7 +101,7 @@ public class Validacion {
         boolean devolver = true;
         Pattern condicionesEmail = Pattern.compile(CONDICIONESEMAIL);
         if (!condicionesEmail.matcher(email).find()){
-            System.err.println("Formato inválido.");
+            System.out.println(Colores.COLOR_ROJO + "Formato inválido." + Colores.COLOR_RESET);
             devolver = false;
         }
         return devolver;
@@ -110,13 +117,22 @@ public class Validacion {
             Date fechaActual = fechaFormateado.parse(fechaFormateado.format(new Date()));
 
             if (fechaUsuarioAdaptada.after(fechaActual)){
-                System.err.println("No se permite colocar una fecha de registro superior a la actual.");
+                System.out.println(Colores.COLOR_ROJO + "No se permite colocar una fecha de registro superior a la actual." + Colores.COLOR_RESET);
                 formatoCorrecto = false;
             }
         } catch (ParseException e) {
-            System.out.println("Formato de la fecha inválida.");
+            System.out.println(Colores.COLOR_ROJO + "Formato de la fecha inválida." + Colores.COLOR_RESET);
             formatoCorrecto = false;
         }
         return formatoCorrecto;
+    }
+
+    public static boolean validarExistenciaIDUsuario(long idUsuario, ArrayDeUsuario usuarios){
+        boolean idNoRepetido = false;
+        if (usuarios.queryUsuario(idUsuario) != null){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
