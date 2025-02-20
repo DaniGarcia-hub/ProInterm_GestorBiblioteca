@@ -6,14 +6,14 @@ public class Editorial {
     private String nombre;
     private String direccion;
     private String telefono;
-    ArrayList<Editorial> editoriales;
+    private static ArrayList<Editorial> editoriales = new ArrayList<>();
+    private static int contadorID = 1;
 
     public Editorial(int id_editorial, String nombre, String direccion, String telefono) {
         this.id_editorial = id_editorial;
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.editoriales = new ArrayList<>();
     }
 
     public int getId_editorial() {
@@ -32,50 +32,53 @@ public class Editorial {
         return telefono;
     }
 
-    public boolean addNewEditorial() {
+    public boolean addNewEditorial(ArrayList<Editorial> editoriales) {
         Scanner scanner = new Scanner(System.in);
-        boolean resultado = true;
 
         System.out.print("Introduce el nombre de la editorial: ");
         String nombre = scanner.nextLine();
 
+        if (queryEditorial(editoriales, nombre) != null) {
+            System.out.println("Error. El nombre de la editorial ya existe.");
+            return false;
+        }
+
+        System.out.print("Introduce la dirección de la editorial: ");
+        String direccion = scanner.nextLine();
+
         for (Editorial editorial : editoriales) {
-            if (editorial.getNombre().equalsIgnoreCase(nombre)) {
-                System.out.println("Error. El nombre de la editorial ya existe");
-                resultado = false;
-            } else {
-                System.out.print("Introduce la dirección de la editorial: ");
-                String direccion = scanner.nextLine();
-
-                if (editorial.getDireccion().equalsIgnoreCase(direccion)) {
-                    System.out.println("Error. El direccion de la editorial ya existe");
-                    resultado = false;
-                } else {
-                    System.out.print("Introduce el teléfono de la editorial: ");
-                    String telefono = scanner.nextLine();
-
-                    if (editorial.getTelefono().equalsIgnoreCase(telefono)) {
-                        System.out.println("Error. El telefono de la editorial ya existe");
-                        resultado = false;
-                    } else {
-                        editoriales.add(new Editorial(getId_editorial() + 1, nombre, direccion, telefono));
-                        System.out.println("Editorial añadida con éxito.");
-                    }
-                }
+            if (editorial.getDireccion().equalsIgnoreCase(direccion)) {
+                System.out.println("Error. La dirección de la editorial ya existe");
+                return false;
             }
         }
 
-        return resultado;
+        System.out.print("Introduce el teléfono de la editorial: ");
+        String telefono = scanner.nextLine();
+
+        for (Editorial editorial : editoriales) {
+            if (editorial.getTelefono().equalsIgnoreCase(telefono)) {
+                System.out.println("Error. El teléfono ya existe.");
+                return false;
+            }
+        }
+
+        editoriales.add(new Editorial(contadorID++, nombre, direccion, telefono));
+        System.out.println("Editorial añadida con éxito.");
+        System.out.println("------------------------------------------------");
+        return true;
     }
 
-    public boolean removeEditorial() {
+    public boolean removeEditorial(ArrayList<Editorial> editoriales) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Introduce el nombre de la editorial a eliminar: ");
         String nombre = scanner.nextLine();
 
-        if (findEditorial(queryEditorial(nombre))) {
+        Editorial editorialExistente = queryEditorial(editoriales, nombre);
+
+        if (editorialExistente != null) {
             System.out.println("Eliminando la editorial " + nombre + "...");
-            editoriales.remove(queryEditorial(nombre));
+            editoriales.remove(editorialExistente);
             return true;
         } else {
             System.out.println("Error. La editorial " + nombre + " no existe");
@@ -83,46 +86,52 @@ public class Editorial {
         }
     }
 
-    public boolean updateEditorial() {
+    public boolean updateEditorial(ArrayList<Editorial> editoriales) {
         Scanner scanner = new Scanner(System.in);
-        boolean resultado = true;
-
         System.out.print("Introduce el nombre de la editorial a actualizar: ");
         String nombre = scanner.nextLine();
-        Editorial editorialExistente = queryEditorial(nombre);
+        Editorial editorialExistente = queryEditorial(editoriales, nombre);
 
-        System.out.print("Qué campo quieres cambiar?(nombre, dirección o teléfono): ");
-        String campo = scanner.nextLine();
-
-        switch (campo) {
-            case "nombre":
-                System.out.print("Introduce el nuevo nombre de la editorial: ");
-                String nombre2 = scanner.nextLine();
-
-                    break;
-
+        if (editorialExistente == null) {
+            System.out.println("Error. La editorial " + nombre + " no existe");
+            return false;
         }
+
+        System.out.print("Introduce el nuevo nombre de la editorial: ");
+        String nuevoNombre = scanner.nextLine();
+
+        if (queryEditorial(editoriales, nuevoNombre) != null) {
+            System.out.println("Error. Ese nombre ya existe.");
+            return false;
+        }
+
+        System.out.print("Introduce la nueva dirección de la editorial: ");
+        String nuevaDireccion = scanner.nextLine();
 
         for (Editorial editorial : editoriales) {
-            if (findEditorial(editorialExistente)) {
-                System.out.print("Introduce el nuevo nombre de la editorial: ");
-                String nombre2 = scanner.nextLine();
-
-                if(editorial.getNombre().equalsIgnoreCase(nombre2)) {
-                    System.out.println("Error. Este nombre de editorial ya existe");
-
-                } else {
-
-                }
-
-                editoriales.set(editoriales.indexOf(editorialExistente), new Editorial(editorialExistente.getId_editorial(), nombre2, ));
-                System.out.println("Editorial actualizada con éxito.");
-            } else {
-                System.out.println("Error. La editorial " + nombre + " no existe");
-                resultado = false;
+            if (editorial.getDireccion().equalsIgnoreCase(nuevaDireccion)) {
+                System.out.println("Error. La dirección ya existe.");
+                return false;
             }
         }
-        return resultado;
+
+        System.out.print("Introduce el nuevo teléfono de la editorial: ");
+        String nuevoTelefono = scanner.nextLine();
+
+        for (Editorial editorial : editoriales) {
+            if (editorial.getTelefono().equalsIgnoreCase(nuevoTelefono)) {
+                System.out.println("Error. El teléfono ya existe.");
+                return false;
+            }
+        }
+
+        editorialExistente.nombre = nuevoNombre;
+        editorialExistente.direccion = nuevaDireccion;
+        editorialExistente.telefono = nuevoTelefono;
+
+        System.out.println("Editorial actualizada con éxito.");
+        System.out.println("------------------------------------------------");
+        return true;
     }
 
     private boolean findEditorial(Editorial editorial) {
@@ -141,12 +150,17 @@ public class Editorial {
         return false;
     }
 
-    public Editorial queryEditorial(String nombre) {
+    public Editorial queryEditorial(ArrayList<Editorial> editoriales, String nombre) {
         for (Editorial editorial : editoriales) {
             if (editorial.getNombre().equalsIgnoreCase(nombre)) {
                 return editorial;
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "- " + nombre + ": [Id: " + id_editorial + ", Dirección: " + direccion + ", Telefono: " + telefono + "]";
     }
 }
