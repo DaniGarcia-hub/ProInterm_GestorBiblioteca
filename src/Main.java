@@ -77,11 +77,11 @@ public class Main {
 
     public static void menu() {
         System.out.println("1. Insertar nueva editorial\n" +
-                "2. Eliminar editorial existente\n" +
-                "3. Actualizar editorial existente\n" +
+                "2. Actualizar editorial existente\n" +
+                "3. Eliminar editorial existente\n" +
                 "4. Consultar una editorial existente\n" +
                 "5. Imprimir lista de editoriales\n" +
-                "6. Salir del programa\n" +
+                "6. Volver a imprimir menú\n" +
                 "7. Salir del programa");
     }
 }

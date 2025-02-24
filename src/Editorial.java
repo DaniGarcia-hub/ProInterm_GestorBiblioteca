@@ -62,7 +62,9 @@ public class Editorial {
                 return false;
             }
         }
-
+        if (contadorID == 1) {
+            contadorID++;
+        }
         editoriales.add(new Editorial(contadorID++, nombre, direccion, telefono));
         System.out.println("Editorial añadida con éxito.");
         System.out.println("------------------------------------------------");
