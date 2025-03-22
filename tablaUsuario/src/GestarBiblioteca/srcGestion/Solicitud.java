@@ -25,7 +25,7 @@ public class Solicitud {
     public static String solicitarNombre(){
         String nombre;
         do {
-            System.out.println("Introduce el nombre del usuario:");
+            System.out.print("Introduce el nombre del usuario: ");
             nombre = sc.nextLine();
 
         } while (!validarNombre(nombre));
@@ -35,7 +35,7 @@ public class Solicitud {
     public static String solicitarDireccion(){
         String direccion;
         do {
-            System.out.println("Introduce la dirección del usuario:");
+            System.out.print("Introduce la dirección del usuario: ");
             direccion = sc.nextLine();
         } while (!validarDireccion(direccion));
         return direccion;
@@ -44,7 +44,7 @@ public class Solicitud {
     public static String solicitarTelefono(){
         String telefono;
         do {
-            System.out.println("Introduce el teléfono del usuario. (Ejemplo: 655502307):");
+            System.out.print("Introduce el teléfono del usuario. (Ejemplo: 655502307): ");
             telefono = sc.nextLine();
         } while (!validarTelefono(telefono));
         return telefono;
@@ -53,7 +53,7 @@ public class Solicitud {
     public static String solicitarEmail(){
         String email;
         do {
-            System.out.println("Introduce el correo electrónico del usuario. (Ejemplo: dangarqui2@gmail.com):");
+            System.out.print("Introduce el correo electrónico del usuario. (Ejemplo: dangarqui2@gmail.com): ");
             email = sc.nextLine();
         } while (!validarEmail(email));
         return email;
@@ -62,9 +62,39 @@ public class Solicitud {
     public static String solicitarFecha(){
         String fecha;
         do {
-            System.out.println("Introduce la fecha de registro del usuario (dd/MM/yyyy):");
+            System.out.print("Introduce la fecha de registro del usuario (dd/MM/yyyy): ");
             fecha = sc.nextLine();
         } while (!validarFecha(fecha));
         return fecha;
+    }
+
+    public static int solicitarUsuario(){
+        Scanner sc = new Scanner(System.in);
+        boolean ejecucionCorrecta = false;
+        while (!ejecucionCorrecta){
+            try {
+                System.out.print("Escoge el usuario por su ID. Ejemplo: (5): ");
+                String entrada = sc.nextLine().trim();
+                return Integer.parseInt(entrada);
+            } catch (NumberFormatException e){
+                System.out.println(Colores.COLOR_ROJO + "Formato incorrecto." + Colores.COLOR_RESET);
+            }
+        }
+        return -1;
+    }
+
+    public static int solicitarCantidad(){
+        Scanner sc = new Scanner(System.in);
+        boolean ejecucionCorrecta = false;
+        while (!ejecucionCorrecta){
+            try {
+                System.out.print("Indica la cantidad: ");
+                String entrada = sc.nextLine().trim();
+                return Integer.parseInt(entrada);
+            } catch (NumberFormatException e){
+                System.out.println(Colores.COLOR_ROJO + "Formato incorrecto." +  Colores.COLOR_RESET);
+            }
+        }
+        return -1;
     }
 }

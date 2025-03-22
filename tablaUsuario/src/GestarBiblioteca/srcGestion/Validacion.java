@@ -1,6 +1,7 @@
 package GestarBiblioteca.srcGestion;
 
 import GestarBiblioteca.Colores;
+import GestarBiblioteca.src.Usuario;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
