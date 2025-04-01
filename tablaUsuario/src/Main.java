@@ -5,6 +5,8 @@ import static GestarBiblioteca.srcGestion.Validacion.*;
 import GestarBiblioteca.Colores;
 import GestarBiblioteca.srcGestion.Solicitud;
 
+import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 // DANIEL JOSÉ GARCÍA QUIRANT. 1ºJ DAW. | TABLA USUARIO.
 
@@ -170,9 +172,14 @@ public class Main {
 
                             // En función del tipo de archivo a generar...
                             if (ejecucionCorrecta){
+                                Scanner sc = new Scanner(System.in);
+                                System.out.println("Introduce la ruta en la que almacenar el archivo:");
+                                String ruta = sc.next().trim();
                                 switch (opcUsuario){
                                     case 1: // Opción XML.
-                                        mostrarXML(datosExportar);
+                                        String nombreEtiquetasPrincipales = Usuario.class.getSimpleName(); // Saca el nombre de la clase.
+                                        generarXML(datosExportar, nombreEtiquetasPrincipales, ruta);
+                                        // Se le pasa el nombre de la clase, para ajustar las etiquetas de "<Usuarios>" y "<Usuario>".
                                         break;
                                 }
                             }
@@ -223,7 +230,8 @@ public class Main {
         while (!ejecucionCorrecta){
             try {
                 System.out.print("Escoge una opción: ");
-                String entrada = sc.nextLine().trim();
+                String entrada = sc.nextLine();
+
                 return Integer.parseInt(entrada);
             } catch (NumberFormatException e){
                 System.out.println(Colores.COLOR_ROJO + "Formato incorrecto." + Colores.COLOR_RESET);
@@ -233,25 +241,42 @@ public class Main {
     }
 
     public static void rellenarMap(Map<String, Object> almacenInfo, Usuario usuarioInfo){
-        almacenInfo.put("id", usuarioInfo.getIdUsuario());
-        almacenInfo.put("nombre", usuarioInfo.getNombre());
-        almacenInfo.put("direccion", usuarioInfo.getDireccion());
-        almacenInfo.put("telefono", usuarioInfo.getTelefono());
-        almacenInfo.put("email", usuarioInfo.getEmail());
-        almacenInfo.put("fregistro", usuarioInfo.getFregistro());
+        Class<?> datosObjeto = usuarioInfo.getClass(); // Se recoge la clase del objeto.
+        Field[] variablesObjts = datosObjeto.getDeclaredFields(); // Se recoge un array de tipo Field, todos los atributos de esa clase.
+        String campoActual = null;
+
+        try {
+            for (Field variable : variablesObjts){ // Por cada atributo...
+                variable.setAccessible(true); // Se permite el acceso a los atributos privados.
+                campoActual = variable.getName(); // Se obtiene su nombre del atributo
+                Object valorCampo = variable.get(usuarioInfo); // Se obtiene el valor del atributo...
+
+                almacenInfo.put(campoActual, valorCampo); // Se añade al HashMap.
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void mostrarXML(Set<Map<String, Object>> datos){
-        System.out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        System.out.println("<Usuarios>");
-        for (Map<String, Object> mapUsuario : datos){
-            System.out.println("    <Usuario>");
-            String[] claves = mapUsuario.keySet().toArray(new String[0]);
-            for (String clave : claves){
-                System.out.println("        <"+ clave + ">" + mapUsuario.get(clave) + "</" + clave + ">");
+    public static void generarXML(Set<Map<String, Object>> datos, String nombreEtiquetas, String ruta){
+        try {
+            FileWriter archivoLeer = new FileWriter(ruta + '\\' + "Gestion_Usuarios.xml");
+            BufferedWriter bufferedWriter = new BufferedWriter(archivoLeer);
+            bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            bufferedWriter.write("<" + nombreEtiquetas + "s>");
+            for (Map<String, Object> mapUsuario : datos){
+                bufferedWriter.write("    <" + nombreEtiquetas + ">");
+                String[] claves = mapUsuario.keySet().toArray(new String[0]);
+                for (String clave : claves){
+                    bufferedWriter.write("        <"+ clave + ">" + mapUsuario.get(clave) + "</" + clave + ">");
+                }
+                bufferedWriter.write("    </" + nombreEtiquetas + ">");
             }
-            System.out.println("    </Usuario>");
+            bufferedWriter.write("</" + nombreEtiquetas + "s>");
+            bufferedWriter.close();
+            System.out.println(Colores.COLOR_VERDE + "FICHERO CREADO CORRECTAMENTE." + Colores.COLOR_RESET);
+        } catch (IOException e){
+            System.err.println("ERROR. No se ha podido introducir los datos.");
         }
-        System.out.println("</Usuarios>");
     }
 }
